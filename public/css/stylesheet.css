@@ -1,0 +1,73 @@
+*{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    outline: none;
+    border: none;
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+           -box-sizing: border-box;
+}
+
+
+
+/**
+ * ======================================================== *
+ * stylesheet to login pages
+ * ======================================================== *
+ */
+section#conteudo-view{
+    position: absolute;
+    right: 0;
+    padding: 20px;
+    float: right;
+    width: 300px;
+    height: 100%;
+    background: #51dca6;
+}
+section#conteudo-view h1{
+    float: left;
+    width: 100%;
+    font: 3em 'Fredoka One', cursive;
+    margin-top: 50px;
+    color: #f3f3f3;
+}
+section#conteudo-view h3,
+section#conteudo-view form p{
+    float: left;
+    width: 100%;
+    font: .8em 'Fredoka One', cursive;
+    color: #f3f3f3;
+}
+section#conteudo-view form,
+section#conteudo-view form label{
+    float: left;
+    width: 100%;
+    margin-bottom: 10px;
+}
+section#conteudo-view form{
+    margin-top: 40px;
+}
+section#conteudo-view form p{
+    font-size: 1.25em;
+}
+section#conteudo-view form input[type="submit"],
+section#conteudo-view form label input{
+    float: left;
+    width: 100%;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 20px;
+    border: 2px solid #52ca9b;
+    color: #959595;
+    font: 1em 'Arial';
+}
+section#conteudo-view form input[type="submit"]{
+    width: 60%;
+    float: right;
+    background: #00ff9c;
+    text-align: center;
+    color: #f9f9f9;
+    font: 1em 'Fredoka One', cursive;
+}
