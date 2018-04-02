@@ -11,25 +11,18 @@ use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Repositories\UserRepository;
 use App\Validators\UserValidator;
+use App\Services\UserService;
 
 
 class UsersController extends Controller
 {
-
-    /**
-     * @var UserRepository
-     */
+    protected $service;
     protected $repository;
 
-    /**
-     * @var UserValidator
-     */
-    protected $validator;
-
-    public function __construct(UserRepository $repository, UserValidator $validator)
+    public function __construct(UserRepository $repository, UserService $service)
     {
-        $this->repository = $repository;
-        $this->validator  = $validator;
+		$this->repository 	= $repository;
+		$this->service 		= $service;
     }
 
 
@@ -40,17 +33,11 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $users = $this->repository->all();
+		$users = $this->repository->all();
 
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $users,
-            ]);
-        }
-
-        return view('users.index', compact('users'));
+        return view('user.index', [
+			'users' => $users
+		]);
     }
 
     /**
@@ -62,34 +49,15 @@ class UsersController extends Controller
      */
     public function store(UserCreateRequest $request)
     {
+		$request = $this->service->store($request->all());
+		$usuario = $request['success'] ? $request['data'] : null;
 
-        try {
+		session()->flash('success', [
+			'success' 	=> $request['success'],
+			'messages' 	=> $request['messages']
+		]);
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $user = $this->repository->create($request->all());
-
-            $response = [
-                'message' => 'User created.',
-                'data'    => $user->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
+        return redirect()->route('user.index');
     }
 
 
@@ -124,10 +92,11 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-
         $user = $this->repository->find($id);
 
-        return view('users.edit', compact('user'));
+        return view('user.edit', [
+            'user' => $user
+        ]);
     }
 
 
@@ -139,38 +108,17 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function update(UserUpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
+        $request = $this->service->update($request->all(), $id);
+        $usuario = $request['success'] ? $request['data'] : null;
 
-        try {
+        session()->flash('success', [
+            'success'   => $request['success'],
+            'messages'  => $request['messages']
+        ]);
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $user = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'User updated.',
-                'data'    => $user->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
+        return redirect()->route('user.index');
     }
 
 
@@ -183,16 +131,13 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+		$request = $this->service->destroy($id);
 
-        if (request()->wantsJson()) {
+		session()->flash('success', [
+			'success' 	=> $request['success'],
+			'messages' 	=> $request['messages']
+		]);
 
-            return response()->json([
-                'message' => 'User deleted.',
-                'deleted' => $deleted,
-            ]);
-        }
-
-        return redirect()->back()->with('message', 'User deleted.');
+        return redirect()->route('user.index');
     }
 }

@@ -8,6 +8,8 @@
     </head>
     <body>
 
+        <div class="background"></div>
+
         <section id="conteudo-view" class="login">
             <h1>Investindo</h1>
             <h3>O nosso gerenciador de investimento</h3>
